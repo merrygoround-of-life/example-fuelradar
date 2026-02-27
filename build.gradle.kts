@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("com.h2database:h2")
 	implementation("org.testcontainers:testcontainers")
+	implementation("com.github.f4b6a3:uuid-creator:6.1.1")
 	runtimeOnly("io.r2dbc:r2dbc-h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
