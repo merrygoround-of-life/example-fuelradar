@@ -11,5 +11,7 @@ data class CreateGasStationRequest(
     val brand: String,
     val selfService: Boolean,
     @field:Positive val gasolinePrice: Long,
-    @field:Positive val dieselPrice: Long
+    @field:Positive val dieselPrice: Long,
+    @field:Positive val gasolinePriceYesterday: Long? = null,
+    @field:Positive val dieselPriceYesterday: Long? = null
 )

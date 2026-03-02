@@ -32,8 +32,8 @@ class GasStationCommandService(
                         selfService = request.selfService,
                         gasolinePrice = request.gasolinePrice,
                         dieselPrice = request.dieselPrice,
-                        gasolinePriceYesterday = request.gasolinePrice,
-                        dieselPriceYesterday = request.dieselPrice
+                        gasolinePriceYesterday = request.gasolinePriceYesterday ?: request.gasolinePrice,
+                        dieselPriceYesterday = request.dieselPriceYesterday ?: request.dieselPrice
                     )
                 )
             )
@@ -50,7 +50,9 @@ class GasStationCommandService(
                         "brand" to saved.brand,
                         "selfService" to saved.selfService,
                         "gasolinePrice" to saved.gasolinePrice,
-                        "dieselPrice" to saved.dieselPrice
+                        "dieselPrice" to saved.dieselPrice,
+                        "gasolinePriceYesterday" to saved.gasolinePriceYesterday,
+                        "dieselPriceYesterday" to saved.dieselPriceYesterday
                     )
                 )
                 eventPublisher.publishEvent(event).thenReturn(saved)

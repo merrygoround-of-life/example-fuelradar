@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicReference
 class GasStationEventListener(
     private val redisTemplate: ReactiveRedisTemplate<String, String>,
     private val objectMapper: ObjectMapper,
+    private val projectionService: GasStationProjectionService,
     environment: Environment
 ) : ApplicationRunner {
 
@@ -61,7 +62,7 @@ class GasStationEventListener(
             }
     }
 
-    private fun startStreamReceiver(): Flux<Void> {
+    private fun startStreamReceiver(): Flux<Long> {
         val options = StreamReceiver.StreamReceiverOptions.builder()
             .pollTimeout(Duration.ofSeconds(1))
             .build()
@@ -77,16 +78,14 @@ class GasStationEventListener(
             }
     }
 
-    private fun processEvent(record: MapRecord<String, String, String>): Mono<Void> {
+    private fun processEvent(record: MapRecord<String, String, String>): Mono<Long> {
         return try {
-            val eventData = record.value
-            val event = parseGasStationChangeEvent(eventData)
-            logger.debug("Processed event: {} for station {}", event.eventType, event.stationCode)
-
-            acknowledgeMessage(record.id.value).then()
+            val event = parseGasStationChangeEvent(record.value)
+            projectionService.project(event)
+                .then(acknowledgeMessage(record.id.value))
         } catch (e: Exception) {
             logger.error("Failed to parse event: {}", record.value, e)
-            acknowledgeMessage(record.id.value).then()
+            acknowledgeMessage(record.id.value)
         }
     }
 
