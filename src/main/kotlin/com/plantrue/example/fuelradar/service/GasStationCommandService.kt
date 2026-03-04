@@ -101,11 +101,9 @@ class GasStationCommandService(
                     changedFields["dieselPrice"] = it
                 }
 
-                if (changedFields.isEmpty()) {
-                    return@flatMap Mono.just(station)
-                }
-
-                gasStationRepository.save(updated)
+                Mono.just(updated)
+                    .filter { changedFields.isNotEmpty() }
+                    .flatMap { gasStationRepository.save(it) }
                     .flatMap { saved ->
                         val event = GasStationChangeEvent(
                             eventId = eventPublisher.generateEventId(),
@@ -116,6 +114,7 @@ class GasStationCommandService(
                         )
                         eventPublisher.publishEvent(event).thenReturn(saved)
                     }
+                    .switchIfEmpty(Mono.just(station))
             }
     }
 }

@@ -1,6 +1,7 @@
 package com.plantrue.example.fuelradar.config
 
 import com.plantrue.example.fuelradar.handler.GasStationCommandHandler
+import com.plantrue.example.fuelradar.handler.GasStationQueryHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.RouterFunction
@@ -15,6 +16,13 @@ class RouterConfig {
         return route()
             .POST("/api/stations", handler::createStation)
             .PUT("/api/stations/{stationCode}", handler::updateStation)
+            .build()
+    }
+
+    @Bean
+    fun gasStationQueryRoutes(handler: GasStationQueryHandler): RouterFunction<ServerResponse> {
+        return route()
+            .GET("/api/stations/rankings/{tag}", handler::getRankings)
             .build()
     }
 }
